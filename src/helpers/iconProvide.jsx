@@ -11,6 +11,8 @@ import {
   UsersRound,
   Youtube,
 } from "lucide-react";
+import { CiLocationOn } from "react-icons/ci";
+
 
 const icons = {
   tovNav: [
@@ -49,6 +51,7 @@ const icons = {
   ShoppingCart,
   HeartHandshake,
   UsersRound,
+  CiLocationOn,
 };
 
 export { icons };
