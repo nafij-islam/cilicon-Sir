@@ -25,6 +25,7 @@ const AutpPlayProgress = ({ image, progressStyle }) => {
           delay: 2500,
           disableOnInteraction: false,
         }}
+        grabCursor = {true}
         navigation={false}
         modules={[Autoplay]}
         onAutoplayTimeLeft={onAutoplayTimeLeft}

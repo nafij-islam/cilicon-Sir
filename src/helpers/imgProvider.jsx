@@ -1,3 +1,4 @@
+import produtVariantBanner from "@assets/allproductBanner.png";
 import bannerthree from "@assets/banner.png";
 import bannerOne from "@assets/bannerOne.png";
 import bannertwo from "@assets/bannertwo.png";
@@ -10,6 +11,6 @@ const imageProvider = {
   bannerOne,
   bannertwo,
   bannerthree,
+  produtVariantBanner,
 };
 export { imageProvider };
-

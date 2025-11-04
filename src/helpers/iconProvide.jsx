@@ -12,7 +12,8 @@ import {
   Youtube,
 } from "lucide-react";
 import { CiLocationOn } from "react-icons/ci";
-
+import { FaCcPaypal } from "react-icons/fa";
+import { MdAutoFixHigh } from "react-icons/md";
 
 const icons = {
   tovNav: [
@@ -52,6 +53,8 @@ const icons = {
   HeartHandshake,
   UsersRound,
   CiLocationOn,
+  FaCcPaypal ,
+  MdAutoFixHigh 
 };
 
 export { icons };

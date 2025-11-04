@@ -7,15 +7,20 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "testcategory": "node src/api/Category.js"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.14",
+    "@tanstack/react-query": "^5.90.5",
+    "@tanstack/react-query-devtools": "^5.90.2",
+    "axios": "^1.12.2",
     "lucide-react": "^0.545.0",
     "prop-types": "^15.8.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-icons": "^5.5.0",
+    "react-router": "^7.9.4",
     "swiper": "^12.0.2",
     "tailwindcss": "^4.1.14"
   },

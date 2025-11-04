@@ -299,3 +299,20 @@
   opacity: var(--swiper-pagination-bullet-opacity, 1);
   background: var(--swiper-pagination-color, var(--danger_700));
 }
+
+
+/*  */
+.swiper-button-next,
+.swiper-button-prev {
+  background: var(--primary_500); 
+  padding: 15px;
+  border-radius: 50%;
+  color: var(--gray_00);
+ 
+  
+}
+
+.swiper-navigation-icon {
+ display: block;
+}
+
