@@ -1,7 +1,10 @@
-import Home from "@pages/Home";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
 import { BrowserRouter, Route, Routes } from "react-router";
+import Layout from "./components/commonComponents/Layout";
+import Home from "./pages/Home";
+import Shop from "./pages/Shop";
 const App = () => {
   const queryClient = new QueryClient();
   return (
@@ -9,10 +12,14 @@ const App = () => {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route element={<Layout />}>
+              <Route index element={<Home />} />
+              <Route path="shop/1/2" element={<Shop />} />
+              <Route path="*" element={"no DAta Found"} />
+            </Route>
           </Routes>
         </BrowserRouter>
-         <ReactQueryDevtools initialIsOpen={false} />
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </>
   );

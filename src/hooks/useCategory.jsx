@@ -1,4 +1,4 @@
-import { getAllProduct, getCategory, getProductbyCategory } from "@/api/Category";
+import { getAllProduct, getCategory, getProductbyCategory, getProductbyLimit } from "@/api/Category";
 import { useQuery } from "@tanstack/react-query";
 
 const useCategory = () => {
@@ -29,6 +29,14 @@ const usegetproductbycategory = (categoryName) => {
 
   return { isPending, error, data };
 };
+const useGetProductByLimit = () => {
+  const { isPending, error, data, refetch } = useQuery({
+    queryKey: ["productskipLimit"],
+    queryFn:  getProductbyLimit,
+  });
 
-export { useCategory, useproduct, usegetproductbycategory };
+  return { isPending, error, data, refetch };
+};
+
+export { useCategory, usegetproductbycategory, useGetProductByLimit, useproduct };
 
