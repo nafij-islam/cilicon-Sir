@@ -9,6 +9,7 @@ const BestSelllingProductConent = ({ productList, title }) => {
         {productList.map((p) => (
           <div className="grid grid-cols-[30%70%] items-center border border-gray_50 rounded py-2 px-3">
             <img
+              loading="lazy"
               src={p.images[0]}
               alt=""
               className="w-[80px] h-[80px] object-center object-cover rounded bg-blend-color-dodge "

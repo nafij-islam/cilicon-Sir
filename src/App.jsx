@@ -14,7 +14,7 @@ const App = () => {
           <Routes>
             <Route element={<Layout />}>
               <Route index element={<Home />} />
-              <Route path="shop/1/2" element={<Shop />} />
+              <Route path="shop" element={<Shop />} />
               <Route path="*" element={"no DAta Found"} />
             </Route>
           </Routes>
