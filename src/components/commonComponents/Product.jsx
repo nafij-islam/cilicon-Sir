@@ -2,7 +2,7 @@ import ProductSkeleton from "../Skeleton/ProductSkeleton";
 import Container from "./Container";
 import Star from "./Star";
 
-const Product = ({ productInfo, isloading, isError }) => {
+const Product = ({ productInfo, isloading, isError ,productWidth="245" ,paritalItemLoad = 8 }) => {
   if (isloading) {
     return (
       <Container>
@@ -24,14 +24,14 @@ const Product = ({ productInfo, isloading, isError }) => {
 
   return (
     <div className="flex justify-between items-center flex-wrap">
-      {productInfo.data.products.slice(0, 8).map((product) => (
+      {productInfo?.data?.products?.slice(0, paritalItemLoad).map((product) => (
         <div key={product.id} className="mt-10">
-          <div className="p-5 border border-gray_50 max-w-[245px] rounded">
+          <div className={`p-5 border border-gray_50 max-w-[${productWidth}px] rounded`}>
             <div className="flex flex-col items-start justify-start gap-y-3">
               <span className="py-[5px] px-[10px] bg-danger_500">HOT</span>
               <img
                 src={product.thumbnail}
-                alt=""
+                alt={product.thumbnail}
                 className="w-[202px] h-[172px] object-cover"
               />
 

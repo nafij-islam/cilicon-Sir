@@ -1,23 +1,35 @@
 import { BreadCrumb } from "@/components/commonComponents/BreadCrumb";
-import CategoryItem from "@/components/commonComponents/CategoryItem";
 import Container from "@/components/commonComponents/Container";
+import ErrorPage from "@/components/commonComponents/error";
+import Product from "@/components/commonComponents/Product";
 import CategoryItemList from "@/components/Shop/Left/category/CategoryItem";
 import CategoryList from "@/components/Shop/Left/category/CategoryList";
 import PriceRange from "@/components/Shop/Left/PriceRange/PriceRange";
-import { useCategory } from "@/hooks/useCategory";
+import SearchTab from "@/components/Shop/Right/SearchTab";
+import { useCategory, usegetproductbycategory, useproduct } from "@/hooks/useCategory";
+import { useState } from "react";
+import { FaCross } from "react-icons/fa";
 
 const Shop = () => {
+  const [searchitemCategory, setsearchitemCategory] = useState(null)
   const {
     isPending: categoryListPending,
     error: categoryListError,
     data: categoryListData,
   } = useCategory();
+  const {isPending:proudctPending , error:productError , data : productData} = useproduct()
+  const {isPending :filtePending , error:filterError , data:filtercdata ,refetch } =usegetproductbycategory(searchitemCategory)
+
+  
   if (categoryListPending) {
     return <h1>loding ...</h1>;
   }
   if (categoryListError) {
-    return <h1>error </h1>;
+    return <ErrorPage message={isError.message}  onRefetch={refetch}/>
   }
+
+
+  
 
   const popularBrands = [
     { name: "Apple", checked: true },
@@ -50,6 +62,11 @@ const Shop = () => {
     { name: "Microwave", selected: false },
     { name: "Samsung", selected: false },
   ];
+  const handleCategory = (item)=> {
+    setsearchitemCategory(item)
+  }
+
+  console.log(filtercdata)
 
   return (
     <div>
@@ -57,15 +74,39 @@ const Shop = () => {
         <BreadCrumb />
       </div>
       <Container>
-        <div className="grid grid-cols-[30%70%] h-screen">
-          <div className="h-full">
+        <div className={`grid grid-cols-[20%80%] gap-x-5`}>
+          <div className="h-full py-10">
             <CategoryList>
-              <CategoryItemList cItem={[...categoryListData.data]} />
+              <CategoryItemList cItem={[...categoryListData.data]} Categoryfn = {handleCategory} />
             </CategoryList>
             {/* price Range */}
             <PriceRange />
           </div>
-          <div className="right h-full bg-primary_100">2</div>
+          {/* right side  */}
+          <div className="py-10 h-full">
+            <SearchTab />
+            <div className="bg-gray_50 py-4 my-4 flex justify-between px-4 items-center">
+              <div className="flex items-center gap-x-4">
+                <span>Active Filters:</span>
+                <div className="flex items-center gap-x-3">
+                  {["asd", "slkf"].map((item) => (
+                    <div className="flex items-center gap-x-2">
+                      <span>Electronics Devices </span>
+                      <span>
+                        {" "}
+                        <FaCross />{" "}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {/* total item */}
+              <span>65,867 Results found.</span>
+            </div>
+
+            {/* product side */}
+            <Product  productInfo={filtercdata ? filtercdata : productData} isloading = {proudctPending} isError={productError} productWidth = {"255"} paritalItemLoad = {16} />
+          </div>
         </div>
       </Container>
     </div>

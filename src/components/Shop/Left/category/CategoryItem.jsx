@@ -1,6 +1,6 @@
-import React from "react";
 import { Virtuoso } from "react-virtuoso";
-const CategoryItemList = ({ cItem = [] }) => {
+const CategoryItemList = ({ cItem = [] ,Categoryfn }) => {
+  
   return (
     <div>
       <Virtuoso
@@ -16,6 +16,7 @@ const CategoryItemList = ({ cItem = [] }) => {
             <div
               className="flex items-center gap-x-2  cursor-pointer"
               key={item}
+              onClick={()=>Categoryfn(item)}
             >
               <input
                 type="radio"
@@ -34,7 +35,7 @@ const CategoryItemList = ({ cItem = [] }) => {
           </div>
         )}
       />
-      =
+      
     </div>
   );
 };
