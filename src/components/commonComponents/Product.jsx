@@ -22,6 +22,7 @@ const Product = ({ productInfo, isloading, isError ,productWidth="245" ,paritalI
     return <div>eroor here </div>;
   }
 
+
   return (
     <div className="flex justify-between items-center flex-wrap">
       {productInfo?.data?.products?.slice(0, paritalItemLoad).map((product) => (

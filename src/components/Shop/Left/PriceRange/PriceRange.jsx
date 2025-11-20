@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import RangeSlider from "react-range-slider-input";
 import "react-range-slider-input/dist/style.css";
-const PriceRange = () => {
+const PriceRange = ({PriceRangeFn = ()=>{} , getPriceRange= ()=> {}}) => {
   const [value, setValue] = useState([30, 60]);
+
   const priceRanges = [
     { label: "All Price", value: "all" },
     { label: "Under $20", value: "under_20" },
@@ -13,10 +14,19 @@ const PriceRange = () => {
     { label: "$1,000 to $10,000", value: "1000_10000" },
   ];
 
+  // Debounce effect (3 seconds)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      PriceRangeFn(value)
+    }, 500);
+    return () => clearTimeout(timer); 
+  }, [value]);
+
+
   return (
     <div className="flex flex-col gap-y-6">
       <h2>Price Range</h2>
-      <RangeSlider id="range-slider-yellow" />
+      <RangeSlider id="range-slider-yellow" onInput={(value)=> setValue(value)} />
       {/* button */}
       <div className="flex justify-between items-center ">
         <button className="border border-gray_100 grow mr-2 py-2 cursor-pointer">
@@ -30,7 +40,7 @@ const PriceRange = () => {
       <div>
         <div className="flex flex-col gap-y-3">
           {priceRanges?.map((price) => (
-            <div className="flex items-center gap-x-2">
+            <div className="flex items-center gap-x-2" onClick={()=>getPriceRange(price.value.split('_'))}>
               <input
                 type="radio"
                 value={price.value}

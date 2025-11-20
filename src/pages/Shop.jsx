@@ -6,30 +6,40 @@ import CategoryItemList from "@/components/Shop/Left/category/CategoryItem";
 import CategoryList from "@/components/Shop/Left/category/CategoryList";
 import PriceRange from "@/components/Shop/Left/PriceRange/PriceRange";
 import SearchTab from "@/components/Shop/Right/SearchTab";
-import { useCategory, usegetproductbycategory, useproduct } from "@/hooks/useCategory";
+import {
+  useCategory,
+  usegetproductbycategory,
+  useproduct,
+} from "@/hooks/useCategory";
 import { useState } from "react";
 import { FaCross } from "react-icons/fa";
 
 const Shop = () => {
-  const [searchitemCategory, setsearchitemCategory] = useState(null)
+  const [searchitemCategory, setsearchitemCategory] = useState(null);
+  const [priceFilterData, setpriceFilerData] = useState({});
   const {
     isPending: categoryListPending,
     error: categoryListError,
     data: categoryListData,
   } = useCategory();
-  const {isPending:proudctPending , error:productError , data : productData} = useproduct()
-  const {isPending :filtePending , error:filterError , data:filtercdata ,refetch } =usegetproductbycategory(searchitemCategory)
+  const {
+    isPending: proudctPending,
+    error: productError,
+    data: productData,
+  } = useproduct();
+  const {
+    isPending: filtePending,
+    error: filterError,
+    data: filtercdata,
+    refetch,
+  } = usegetproductbycategory(searchitemCategory);
 
-  
   if (categoryListPending) {
     return <h1>loding ...</h1>;
   }
   if (categoryListError) {
-    return <ErrorPage message={isError.message}  onRefetch={refetch}/>
+    return <ErrorPage message={isError.message} onRefetch={refetch} />;
   }
-
-
-  
 
   const popularBrands = [
     { name: "Apple", checked: true },
@@ -62,11 +72,36 @@ const Shop = () => {
     { name: "Microwave", selected: false },
     { name: "Samsung", selected: false },
   ];
-  const handleCategory = (item)=> {
-    setsearchitemCategory(item)
-  }
+  const handleCategory = (item) => {
+    setsearchitemCategory(item);
+  };
 
-  console.log(filtercdata)
+  // price range filte
+  const PriceRangeFn = (prange) => {
+    const [minValue, maxValue] = prange;
+    const filterValue = productData.data.products.filter(
+      (p) => p.price >= minValue && p.price <= maxValue
+    );
+    setpriceFilerData({ ...productData, data: { products: filterValue } });
+  };
+
+  // calculate min and max value
+  const sortedArray = productData.data.products.sort((a , b)=>a.price -b.price )
+  const minValue = sortedArray[0]
+  const maxValue = sortedArray[sortedArray.length -1]
+
+  // price fileter 
+  const getPriceRange = (range)=> {
+    const [min, max] =range
+    const minValue = min == 'under' ? Number(0) : Number(min) ;
+    const maxValue = Number(max)
+    // const filterValue = productData.data.products.filter(
+    //   (p) => p.price >= min && p.price <= max
+    // );
+    // setpriceFilerData({ ...productData, data: { products: filterValue } });
+     console.log(minValue , maxValue)
+  }
+  
 
   return (
     <div>
@@ -77,10 +112,13 @@ const Shop = () => {
         <div className={`grid grid-cols-[20%80%] gap-x-5`}>
           <div className="h-full py-10">
             <CategoryList>
-              <CategoryItemList cItem={[...categoryListData.data]} Categoryfn = {handleCategory} />
+              <CategoryItemList
+                cItem={[...categoryListData.data]}
+                Categoryfn={handleCategory}
+              />
             </CategoryList>
             {/* price Range */}
-            <PriceRange />
+            <PriceRange PriceRangeFn={PriceRangeFn} getPriceRange = {getPriceRange} />
           </div>
           {/* right side  */}
           <div className="py-10 h-full">
@@ -105,7 +143,19 @@ const Shop = () => {
             </div>
 
             {/* product side */}
-            <Product  productInfo={filtercdata ? filtercdata : productData} isloading = {proudctPending} isError={productError} productWidth = {"255"} paritalItemLoad = {16} />
+            <Product
+              productInfo={
+                filtercdata
+                  ? filtercdata
+                  : priceFilterData?.data?.products?.length > 1
+                  ? priceFilterData
+                  : productData
+              }
+              isloading={proudctPending }
+              isError={productError}
+              productWidth={"255"}
+              paritalItemLoad={16}
+            />
           </div>
         </div>
       </Container>
