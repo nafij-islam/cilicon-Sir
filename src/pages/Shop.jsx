@@ -95,11 +95,11 @@ const Shop = () => {
     const [min, max] =range
     const minValue = min == 'under' ? Number(0) : Number(min) ;
     const maxValue = Number(max)
-    // const filterValue = productData.data.products.filter(
-    //   (p) => p.price >= min && p.price <= max
-    // );
-    // setpriceFilerData({ ...productData, data: { products: filterValue } });
-     console.log(minValue , maxValue)
+    const filterValue = productData.data.products.filter(
+      (p) => p.price >= minValue && p.price <= maxValue
+    );
+    setpriceFilerData({ ...productData, data: { products: filterValue } });
+
   }
   
 
@@ -154,7 +154,7 @@ const Shop = () => {
               isloading={proudctPending }
               isError={productError}
               productWidth={"255"}
-              paritalItemLoad={16}
+              paritalItemLoad={30}
             />
           </div>
         </div>

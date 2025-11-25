@@ -47,5 +47,17 @@ const getProductbyLimit = async (  ) => {
         throw error;
     }
 };
-export { getAllProduct, getCategory, getProductbyCategory, getProductbyLimit };
+const SingleProduct = async ( id ) => {
+    try {
+        const { data, status, statusText } = await instance.get(
+            `/products/${id}`
+        );
+      
+        return { data, status, statusText };
+    } catch (error) {
+        console.error("Product network request Failed ", error);
+        throw error;
+    }
+};
+export { getAllProduct, getCategory, getProductbyCategory, getProductbyLimit, SingleProduct };
 

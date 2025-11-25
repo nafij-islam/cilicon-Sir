@@ -3,6 +3,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { BrowserRouter, Route, Routes } from "react-router";
 import Layout from "./components/commonComponents/Layout";
+import ProductDeatilsPage from "./components/productDetails/Index";
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
 const App = () => {
@@ -15,6 +16,7 @@ const App = () => {
             <Route element={<Layout />}>
               <Route index element={<Home />} />
               <Route path="shop" element={<Shop />} />
+              <Route path="product/:id" element={<ProductDeatilsPage />} />
               <Route path="*" element={"no DAta Found"} />
             </Route>
           </Routes>
