@@ -4,7 +4,7 @@ import Container from "./Container";
 
 export const BreadCrumb = () => {
   const { pathname } = useLocation();
-  console.log(pathname);
+
   const paths = pathname.split("/").filter((path) => path);
 
   return (

@@ -1,5 +1,5 @@
 const BestSelllingProductConent = ({ productList, title }) => {
-  console.log(productList);
+ 
 
   return (
     <div>
