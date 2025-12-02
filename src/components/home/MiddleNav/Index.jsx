@@ -1,8 +1,9 @@
 import Button from "@/components/commonComponents/Button";
 import Container from "@/components/commonComponents/Container";
+import { quantityContext } from "@/context/QuantityContext";
 import { icons } from "@/helpers/iconProvide";
 import { imageProvider } from "@/helpers/imgProvider";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 const MiddleNav = () => {
 const [showSearchIcons, setshowSearchIcons] = useState(true)
@@ -37,6 +38,8 @@ const [showSearchIcons, setshowSearchIcons] = useState(true)
 
     }
   }
+  const value = useContext(quantityContext);
+
 
   return (
     <div className="bg-secondary_700 py-5 border-t border-t-gray_300">
@@ -82,7 +85,7 @@ const [showSearchIcons, setshowSearchIcons] = useState(true)
                       <icon.icon />
                     </span>
                     <span className="absolute top-0 right-2 w-6 h-6 bg-gray_00 rounded-full flex justify-center items-center body_sm_400">
-                      1
+                      {value}
                     </span>
                   </div>
                 ) : (

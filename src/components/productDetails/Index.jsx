@@ -1,4 +1,5 @@
 import { addToCart } from "@/features/addtocart";
+import { sucessToast } from "@/helpers/Toast";
 import { useGetSingleProduct } from "@/hooks/useCategory";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -22,6 +23,7 @@ const ProductDetailsPage = () => {
 
   const handleAddtoCart = (pr) => {
     dispatch(addToCart(pr));
+    sucessToast("add to cart sucessfully" +pr.title)
   };
 
   return (

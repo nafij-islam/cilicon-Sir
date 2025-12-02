@@ -1,9 +1,29 @@
-import { useSelector } from "react-redux";
+import { decrement, getTotal, increment, remove } from "@/features/addtocart";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const AddToCart = () => {
-  const { value } = useSelector((state) => state.cartStore);
-  console.log(value);
+  const dispatch = useDispatch();
+  const { value ,totalQuantity,totalPrice } = useSelector((state) => state.cartStore);
+ 
+  useEffect(() => {
+     dispatch(getTotal());
+  },[localStorage.getItem('cartitem')]);
 
+  // hadleincrement
+  const hadleincrement = (item) => {
+    dispatch(increment(item.id));
+  };
+
+  // handledecrement
+  const handledecrement = (item) => {
+    dispatch(decrement(item.id));
+  };
+
+  // handleremove
+  const handleremove = (item) => {
+    dispatch(remove(item.id));
+  };
   return (
     <div className="lg:max-w-5xl max-lg:max-w-2xl mx-auto bg-white p-4">
       <div className="grid lg:grid-cols-3 gap-6">
@@ -27,14 +47,20 @@ const AddToCart = () => {
                     <h4 className="text-[15px] font-semibold text-slate-900">
                       {item.title}
                     </h4>
-                    <h6 className="text-xs font-medium text-red-500 cursor-pointer mt-1">
+                    <h6
+                      className="text-xs font-medium text-red-500 cursor-pointer mt-1"
+                      onClick={() => handleremove(item)}
+                    >
                       Remove
                     </h6>
                     <div className="flex gap-4 mt-4">
                       {/* Quantity */}
                       <div>
                         <div className="flex items-center px-2.5 py-1.5 border border-gray-300 text-slate-900 text-xs rounded-md">
-                          <span className="cursor-pointer">
+                          <span
+                            className="cursor-pointer"
+                            onClick={() => handledecrement(item)}
+                          >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               className="w-2.5 fill-current"
@@ -46,7 +72,10 @@ const AddToCart = () => {
 
                           <span className="mx-3">{item.quantity}</span>
 
-                          <span className="cursor-pointer">
+                          <span
+                            className="cursor-pointer"
+                            onClick={() => hadleincrement(item)}
+                          >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               className="w-2.5 fill-current"
@@ -67,7 +96,7 @@ const AddToCart = () => {
                   </h4>
                   <h1>X</h1>
                   <h4 className="text-[15px] font-semibold text-slate-900">
-                    {Math.round(item.quantity)} = 
+                    {Math.round(item.quantity)} =
                   </h4>
                   <h4 className="text-[15px] font-semibold text-slate-900">
                     ${Math.round(item.price * item.quantity)}
@@ -86,26 +115,16 @@ const AddToCart = () => {
           <hr className="border-gray-300 mt-4 mb-8" />
 
           <ul className="text-slate-500 font-medium mt-8 space-y-4">
+         
+          
             <li className="flex flex-wrap gap-4 text-sm">
-              Discount{" "}
+              Total Item
               <span className="ml-auto text-slate-900 font-semibold">
-                $0.00
-              </span>
-            </li>
-            <li className="flex flex-wrap gap-4 text-sm">
-              Shipping{" "}
-              <span className="ml-auto text-slate-900 font-semibold">
-                $2.00
-              </span>
-            </li>
-            <li className="flex flex-wrap gap-4 text-sm">
-              Tax{" "}
-              <span className="ml-auto text-slate-900 font-semibold">
-                $4.00
+                {totalQuantity}
               </span>
             </li>
             <li className="flex flex-wrap gap-4 text-sm text-slate-900">
-              Total <span className="ml-auto font-semibold">$216.00</span>
+              Total <span className="ml-auto font-semibold">${totalPrice}</span>
             </li>
           </ul>
 
