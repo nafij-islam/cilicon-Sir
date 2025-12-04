@@ -1,8 +1,78 @@
+import { signUpSchema } from "@/helpers/Schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  GoogleAuthProvider,
+  sendEmailVerification,
+  signInWithPopup,
+  updateProfile,
+} from "firebase/auth";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
 const SignUp = () => {
+  const navigate = useNavigate();
+  const [loading, setloading] = useState(false);
+  const [name, setname] = useState("");
+
+  const auth = getAuth();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(signUpSchema),
+  });
+
+  const formhandler = (value) => {
+    setloading(true);
+    setname(value.userName);
+    createUserWithEmailAndPassword(auth, value.email, value.password)
+      .then((userinfo) => {
+        console.log(userinfo.user);
+      })
+      .then(() => {
+        sendEmailVerification(auth.currentUser);
+      })
+      .then(() => {
+        console.log("Email send");
+        updateProfile(auth.currentUser, {
+          displayName: name || "XYZ",
+          photoURL:
+            "https://png.pngtree.com/png-vector/20231019/ourmid/pngtree-user-profile-avatar-png-image_10211467.png",
+        });
+      })
+      .then(() => {
+        console.log("profile updated");
+        navigate("/signin");
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setloading(false);
+      });
+  };
+
+  // handleSignupwithGoogle\
+  const handleSignupwithGoogle = () => {
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const user = result.user;
+        console.log(user)
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <div className="h-screen flex justify-center items-center">
       <div className="flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 lg:max-w-4xl">
-        
         {/* LEFT IMAGE */}
         <div
           className="hidden bg-cover lg:block lg:w-1/2"
@@ -52,7 +122,10 @@ const SignUp = () => {
               </svg>
             </div>
 
-            <span className="w-5/6 px-4 py-3 font-bold text-center">
+            <span
+              className="w-5/6 px-4 py-3 font-bold text-center"
+              onClick={handleSignupwithGoogle}
+            >
               Sign in with Google
             </span>
           </a>
@@ -71,63 +144,82 @@ const SignUp = () => {
             <span className="w-1/5 border-b dark:border-gray-400 lg:w-1/4"></span>
           </div>
 
-  {/* user Input */}
-          <div className="mt-4">
-            <label
-              className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200"
-              htmlFor="LoggingEmailAddress"
-            >
-              
-              User Name
-            </label>
-            <input
-              id="LoggingEmailAddress"
-              className="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300"
-              type="text"
-            />
-          </div>
-          {/* Email Input */}
-          <div className="mt-4">
-            <label
-              className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200"
-              htmlFor="LoggingEmailAddress"
-            >
-              Email Address
-            </label>
-            <input
-              id="LoggingEmailAddress"
-              className="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300"
-              type="email"
-            />
-          </div>
-
-          {/* Password */}
-          <div className="mt-4">
-            <div className="flex justify-between">
+          <form action="#" onSubmit={handleSubmit(formhandler)}>
+            {/* user Input */}
+            <div className="mt-4">
               <label
                 className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200"
-                htmlFor="loggingPassword"
+                htmlFor="LoggingEmailAddress"
               >
-                Password
+                User Name
               </label>
-              <a href="#" className="text-xs text-gray-500 dark:text-gray-300 hover:underline">
-                Forget Password?
-              </a>
+              <input
+                id="LoggingEmailAddress"
+                className="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300"
+                type="text"
+                {...register("userName")}
+              />
+              {errors.userName && (
+                <span className="text-red-500">{errors.userName.message}</span>
+              )}
+            </div>
+            {/* Email Input */}
+            <div className="mt-4">
+              <label
+                className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200"
+                htmlFor="LoggingEmailAddress"
+              >
+                Email Address
+              </label>
+              <input
+                id="LoggingEmailAddress"
+                className="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300"
+                type="email"
+                {...register("email")}
+              />
+              {errors.email && (
+                <span className="text-red-500">{errors.email.message}</span>
+              )}
             </div>
 
-            <input
-              id="loggingPassword"
-              className="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300"
-              type="password"
-            />
-          </div>
+            {/* Password */}
+            <div className="mt-4">
+              <div className="flex justify-between">
+                <label
+                  className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200"
+                  htmlFor="loggingPassword"
+                >
+                  Password
+                </label>
+                <a
+                  href="#"
+                  className="text-xs text-gray-500 dark:text-gray-300 hover:underline"
+                >
+                  Forget Password?
+                </a>
+              </div>
 
-          {/* Button */}
-          <div className="mt-6">
-            <button className="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-gray-800 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50">
-              Sign In
-            </button>
-          </div>
+              <input
+                id="loggingPassword"
+                className="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300"
+                type="password"
+                {...register("password")}
+              />
+              {errors.password && (
+                <span className="text-red-500">{errors.password.message}</span>
+              )}
+            </div>
+
+            {/* Button */}
+            <div className="mt-6">
+              <button
+                type="submit"
+                className="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-gray-800 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50"
+              >
+                Sign In
+              </button>
+            </div>
+          </form>
 
           <div className="flex items-center justify-between mt-4">
             <span className="w-1/5 border-b dark:border-gray-600 md:w-1/4"></span>

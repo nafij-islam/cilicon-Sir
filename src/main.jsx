@@ -1,4 +1,5 @@
 import { StrictMode } from 'react';
+import "./firebase/dbconfig"
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
