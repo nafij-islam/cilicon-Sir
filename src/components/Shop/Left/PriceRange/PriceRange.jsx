@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import RangeSlider from "react-range-slider-input";
 import "react-range-slider-input/dist/style.css";
-const PriceRange = ({PriceRangeFn = ()=>{} , getPriceRange= ()=> {}}) => {
-  const [value, setValue] = useState([30, 60]);
+const PriceRange = ({PriceRangeFn = ()=>{} , getPriceRange= ()=> {} ,rangeValue}  ) => {
+  const [value] = useState(rangeValue);
+  
+  const [rangeValuein ,setRangeValue] = useState(value[1])
 
   const priceRanges = [
     { label: "All Price", value: "all" },
@@ -17,16 +18,22 @@ const PriceRange = ({PriceRangeFn = ()=>{} , getPriceRange= ()=> {}}) => {
   // Debounce effect (3 seconds)
   useEffect(() => {
     const timer = setTimeout(() => {
-      PriceRangeFn(value)
+      PriceRangeFn(rangeValuein)
     }, 500);
     return () => clearTimeout(timer); 
-  }, [value]);
+  }, [rangeValuein ]);
+
+  // handleRangeInput
+  const handleRangeInput = (event)=> {
+    setRangeValue(event.target.value)
+  }
 
 
   return (
     <div className="flex flex-col gap-y-6">
       <h2>Price Range</h2>
-      <RangeSlider id="range-slider-yellow" onInput={(value)=> setValue(value)} />
+      <p>{rangeValuein} Tk </p>
+      <input  type="range"  min={value[0]}  max={value[1]} value={rangeValuein}   onChange={handleRangeInput}/>
       {/* button */}
       <div className="flex justify-between items-center ">
         <button className="border border-gray_100 grow mr-2 py-2 cursor-pointer">

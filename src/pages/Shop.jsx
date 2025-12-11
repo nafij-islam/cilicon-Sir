@@ -11,12 +11,17 @@ import {
   usegetproductbycategory,
   useproduct,
 } from "@/hooks/useCategory";
-import { useState } from "react";
+import { getAllPriceRange, getAllTagList, gotMinimumMax, sortProduct } from "@/lib/lib";
+import { useEffect, useState } from "react";
 import { FaCross } from "react-icons/fa";
+
 
 const Shop = () => {
   const [searchitemCategory, setsearchitemCategory] = useState(null);
   const [priceFilterData, setpriceFilerData] = useState({});
+  const [fileteralldata, setfileteralldata] = useState([]);
+  const [Tags, setTags] = useState([]);
+  // const [] =
   const {
     isPending: categoryListPending,
     error: categoryListError,
@@ -27,6 +32,8 @@ const Shop = () => {
     error: productError,
     data: productData,
   } = useproduct();
+
+  // category wise search api
   const {
     isPending: filtePending,
     error: filterError,
@@ -34,74 +41,64 @@ const Shop = () => {
     refetch,
   } = usegetproductbycategory(searchitemCategory);
 
-  if (categoryListPending) {
+  // useEffect for handleing all api side effect
+  useEffect(() => {
+    if (filtercdata) {
+      setfileteralldata(filtercdata);
+    } else if (productData) {
+      setfileteralldata(productData);
+      const tagList =  getAllTagList(productData);
+      setTags(tagList)
+    }
+  }, [productData, filtercdata]);
+
+  if (categoryListPending || proudctPending) {
     return <h1>loding ...</h1>;
   }
   if (categoryListError) {
     return <ErrorPage message={isError.message} onRefetch={refetch} />;
   }
 
-  const popularBrands = [
-    { name: "Apple", checked: true },
-    { name: "Microsoft", checked: true },
-    { name: "Dell", checked: false },
-    { name: "Symphony", checked: false },
-    { name: "Sony", checked: false },
-    { name: "LG", checked: true },
-    { name: "One Plus", checked: false },
-    { name: "Google", checked: true },
-    { name: "Samsung", checked: false },
-    { name: "HP", checked: true },
-    { name: "Xiaomi", checked: false },
-    { name: "Panasonic", checked: true },
-    { name: "Intel", checked: false },
-  ];
 
-  const popularTags = [
-    { name: "Game", selected: false },
-    { name: "iPhone", selected: false },
-    { name: "TV", selected: false },
-    { name: "Asus Laptops", selected: false },
-    { name: "Macbook", selected: false },
-    { name: "SSD", selected: false },
-    { name: "Graphics Card", selected: true },
-    { name: "Power Bank", selected: false },
-    { name: "Smart TV", selected: false },
-    { name: "Speaker", selected: false },
-    { name: "Tablet", selected: false },
-    { name: "Microwave", selected: false },
-    { name: "Samsung", selected: false },
-  ];
   const handleCategory = (item) => {
     setsearchitemCategory(item);
   };
 
   // price range filte
   const PriceRangeFn = (prange) => {
-    const [minValue, maxValue] = prange;
     const filterValue = productData.data.products.filter(
-      (p) => p.price >= minValue && p.price <= maxValue
+      (p) => p.price >= 1 && p.price <= Number(prange)
     );
-    setpriceFilerData({ ...productData, data: { products: filterValue } });
+
+    setfileteralldata({
+      ...productData,
+      data: { products: sortProduct(filterValue) },
+    });
   };
 
-  // calculate min and max value
-  const sortedArray = productData.data.products.sort((a , b)=>a.price -b.price )
-  const minValue = sortedArray[0]
-  const maxValue = sortedArray[sortedArray.length -1]
+  // price fileter
+  const getPriceRange = (range) => {
+    if (range.includes("all")) {
+      // calculate min and max value
+      const filterValue = getAllPriceRange(productData);
+      setfileteralldata({ ...productData, data: { products: filterValue } });
+    } else {
+      const [min, max] = range;
+      const minValue = min == "under" ? Number(0) : Number(min);
+      const maxValue = Number(max);
+      const filterValue = productData.data.products.filter(
+        (p) => p.price >= minValue && p.price <= maxValue
+      );
+      setfileteralldata({ ...productData, data: { products: filterValue } });
+    }
+  };
 
-  // price fileter 
-  const getPriceRange = (range)=> {
-    const [min, max] =range
-    const minValue = min == 'under' ? Number(0) : Number(min) ;
-    const maxValue = Number(max)
-    const filterValue = productData.data.products.filter(
-      (p) => p.price >= minValue && p.price <= maxValue
-    );
-    setpriceFilerData({ ...productData, data: { products: filterValue } });
-
-  }
-  
+  const toggleBrand = (index) => {
+    const updated = [...brands];
+    updated[index].checked = !updated[index].checked;
+    setBrands(updated);
+    getAllTagList(productData)
+  };
 
   return (
     <div>
@@ -118,7 +115,34 @@ const Shop = () => {
               />
             </CategoryList>
             {/* price Range */}
-            <PriceRange PriceRangeFn={PriceRangeFn} getPriceRange = {getPriceRange} />
+            {productData && (
+              <PriceRange
+                rangeValue={gotMinimumMax(productData)}
+                PriceRangeFn={PriceRangeFn}
+                getPriceRange={getPriceRange}
+              />
+            )}
+
+            {/* search bry popularBrands */}
+            <div className="p-4 bg-white rounded shadow">
+              <h3 className="font-semibold mb-3">Popular Brands</h3>
+
+              <div className="flex flex-col gap-2">
+                {Tags.map((tag) => (
+                  <label
+                    key={tag.name}
+                    className="flex items-center gap-2 cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={tag.checked}
+                      onChange={() => toggleTag(tag.id)}
+                    />
+                    <span>{tag.name}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
           </div>
           {/* right side  */}
           <div className="py-10 h-full">
@@ -144,14 +168,8 @@ const Shop = () => {
 
             {/* product side */}
             <Product
-              productInfo={
-                filtercdata
-                  ? filtercdata
-                  : priceFilterData?.data?.products?.length > 1
-                  ? priceFilterData
-                  : productData
-              }
-              isloading={proudctPending }
+              productInfo={fileteralldata}
+              isloading={proudctPending}
               isError={productError}
               productWidth={"255"}
               paritalItemLoad={30}
